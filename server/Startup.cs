@@ -15,6 +15,7 @@ using server.Models.DataAccess;
 using Microsoft.AspNetCore.Mvc.Cors.Internal;
 using server.Services;
 using server.Models.Entities;
+using Microsoft.EntityFrameworkCore.InMemory;
 
 namespace server
 {
@@ -38,9 +39,11 @@ namespace server
             services.AddDistributedMemoryCache();
 
 
-            var connection = @"Server=(localdb)\mssqllocaldb;Database=Catalog;Trusted_Connection=True;ConnectRetryCount=0";
-            services.AddDbContext<Context>
-                (options => options.UseSqlServer(connection));
+            var dboptions = new DbContextOptionsBuilder<Context>()
+                .UseInMemoryDatabase(databaseName: "Add_writes_to_database")
+                .Options;
+            
+            services.AddDbContext<Context>(opt => opt.UseInMemoryDatabase());
 
 
             services.AddScoped<IProductService, ProductService>();
